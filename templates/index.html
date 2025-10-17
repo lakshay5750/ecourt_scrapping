@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eCourts Cause List Scraper</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; font-family: Arial, sans-serif; }
+        .header { background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 2rem 0; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-primary { background: #3498db; border: none; }
+        .btn-primary:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <div class="header text-center mb-4">
+        <div class="container">
+            <h1>eCourts Cause List Scraper</h1>
+            <p class="lead">Download cause lists directly from ecourts.gov.in</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">Download Cause List</h4>
+                        
+                        <form id="causelistForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">State</label>
+                                    <select class="form-select" id="state" required>
+                                        <option value="">Loading states...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">District</label>
+                                    <select class="form-select" id="district" required disabled>
+                                        <option value="">Select state first</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Court Complex</label>
+                                    <select class="form-select" id="courtComplex" required disabled>
+                                        <option value="">Select district first</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Date (DD-MM-YYYY)</label>
+                                    <input type="text" class="form-control" id="date" 
+                                           value="{{ today }}" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                Download Cause List PDF
+                            </button>
+                        </form>
+
+                        <div id="result" class="mt-4" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5>How to Use</h5>
+                        <ol>
+                            <li>Select your State from the dropdown</li>
+                            <li>Choose District (automatically populated)</li>
+                            <li>Select Court Complex (automatically populated)</li>
+                            <li>Enter date in DD-MM-YYYY format</li>
+                            <li>Click Download to get the cause list</li>
+                        </ol>
+                        <p class="text-muted">
+                            <small>Data is fetched directly from 
+                            <a href="https://services.ecourts.gov.in/ecourtindia_v6/?p=cause_list" target="_blank">
+                                eCourts Cause List
+                            </a></small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load states on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStates();
+        });
+
+        async function loadStates() {
+            try {
+                const response = await fetch('/api/states');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const select = document.getElementById('state');
+                    select.innerHTML = '<option value="">Select State</option>';
+                    data.data.forEach(state => {
+                        const option = document.createElement('option');
+                        option.value = state.name;
+                        option.textContent = state.name;
+                        select.appendChild(option);
+                    });
+                } else {
+                    showError('Failed to load states: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                showError('Error loading states: ' + error.message);
+            }
+        }
+
+        // Load districts when state changes
+        document.getElementById('state').addEventListener('change', async function() {
+            const state = this.value;
+            const districtSelect = document.getElementById('district');
+            const complexSelect = document.getElementById('courtComplex');
+            
+            if (!state) {
+                districtSelect.innerHTML = '<option value="">Select state first</option>';
+                districtSelect.disabled = true;
+                complexSelect.innerHTML = '<option value="">Select district first</option>';
+                complexSelect.disabled = true;
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/districts/${encodeURIComponent(state)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    districtSelect.innerHTML = '<option value="">Select District</option>';
+                    data.data.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.name;
+                        option.textContent = district.name;
+                        districtSelect.appendChild(option);
+                    });
+                    districtSelect.disabled = false;
+                    
+                    // Reset court complex
+                    complexSelect.innerHTML = '<option value="">Select district first</option>';
+                    complexSelect.disabled = true;
+                } else {
+                    showError('Failed to load districts');
+                }
+            } catch (error) {
+                showError('Error loading districts: ' + error.message);
+            }
+        });
+
+        // Load court complexes when district changes
+        document.getElementById('district').addEventListener('change', async function() {
+            const state = document.getElementById('state').value;
+            const district = this.value;
+            const complexSelect = document.getElementById('courtComplex');
+            
+            if (!state || !district) {
+                complexSelect.innerHTML = '<option value="">Select district first</option>';
+                complexSelect.disabled = true;
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/court-complexes/${encodeURIComponent(state)}/${encodeURIComponent(district)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    complexSelect.innerHTML = '<option value="">Select Court Complex</option>';
+                    data.data.forEach(complex => {
+                        const option = document.createElement('option');
+                        option.value = complex.name;
+                        option.textContent = complex.name;
+                        option.setAttribute('data-value', complex.value);
+                        complexSelect.appendChild(option);
+                    });
+                    complexSelect.disabled = false;
+                } else {
+                    showError('Failed to load court complexes');
+                }
+            } catch (error) {
+                showError('Error loading court complexes: ' + error.message);
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('causelistForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const state = document.getElementById('state').value;
+            const district = document.getElementById('district').value;
+            const courtComplex = document.getElementById('courtComplex').value;
+            const date = document.getElementById('date').value;
+
+            if (!state || !district || !courtComplex || !date) {
+                showError('Please fill all fields');
+                return;
+            }
+
+            // Validate date format
+            if (!/^\d{2}-\d{2}-\d{4}$/.test(date)) {
+                showError('Please enter date in DD-MM-YYYY format');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/download-causelist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        state: state,
+                        district: district,
+                        court_complex: courtComplex,
+                        date: date
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess(`Download successful! <a href="${data.download_url}" class="btn btn-success btn-sm ms-2">Download PDF</a>`);
+                } else {
+                    showError('Download failed: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        });
+
+        function showError(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="alert alert-danger">${message}</div>`;
+            resultDiv.style.display = 'block';
+        }
+
+        function showSuccess(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="alert alert-success">${message}</div>`;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

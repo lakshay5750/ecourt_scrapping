@@ -1,0 +1,15 @@
+eCourts Cause List
+==================
+
+State: Maharashtra
+District: Nagpur
+Court Complex: City Civil Court
+Date: 17-10-2025
+
+This is a mock cause list.
+In a real implementation, this would be an actual PDF downloaded from eCourts website.
+
+Sample Cases:
+1. Case No: ABC/123/2024 - Petitioner vs Respondent - Court Room 1
+2. Case No: XYZ/456/2024 - Petitioner vs Respondent - Court Room 2
+3. Case No: DEF/789/2024 - Petitioner vs Respondent - Court Room 3

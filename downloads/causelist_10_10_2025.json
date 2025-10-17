@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "state": "Delhi",
+    "district": "South Delhi",
+    "court_complex": "Tis Hazari Courts",
+    "date": "10-10-2025",
+    "downloaded_at": "2025-10-17T19:25:35.847427"
+  },
+  "causelist": [
+    {
+      "serial_no": 1,
+      "case_number": "CA/1/2024",
+      "petitioner": "Petitioner 1",
+      "respondent": "Respondent 1",
+      "court_room": "Court Room 2",
+      "judge_name": "Honorable Judge Verma",
+      "hearing_time": "10:45 AM"
+    },
+    {
+      "serial_no": 2,
+      "case_number": "CA/2/2024",
+      "petitioner": "Petitioner 2",
+      "respondent": "Respondent 2",
+      "court_room": "Court Room 3",
+      "judge_name": "Honorable Judge Singh",
+      "hearing_time": "10:60 AM"
+    },
+    {
+      "serial_no": 3,
+      "case_number": "CA/3/2024",
+      "petitioner": "Petitioner 3",
+      "respondent": "Respondent 3",
+      "court_room": "Court Room 4",
+      "judge_name": "Honorable Judge Kumar",
+      "hearing_time": "10:75 AM"
+    },
+    {
+      "serial_no": 4,
+      "case_number": "CA/4/2024",
+      "petitioner": "Petitioner 4",
+      "respondent": "Respondent 4",
+      "court_room": "Court Room 5",
+      "judge_name": "Honorable Judge Yadav",
+      "hearing_time": "10:30 AM"
+    },
+    {
+      "serial_no": 5,
+      "case_number": "CA/5/2024",
+      "petitioner": "Petitioner 5",
+      "respondent": "Respondent 5",
+      "court_room": "Court Room 1",
+      "judge_name": "Honorable Judge Sharma",
+      "hearing_time": "10:45 AM"
+    },
+    {
+      "serial_no": 6,
+      "case_number": "CA/6/2024",
+      "petitioner": "Petitioner 6",
+      "respondent": "Respondent 6",
+      "court_room": "Court Room 2",
+      "judge_name": "Honorable Judge Verma",
+      "hearing_time": "10:60 AM"
+    },
+    {
+      "serial_no": 7,
+      "case_number": "CA/7/2024",
+      "petitioner": "Petitioner 7",
+      "respondent": "Respondent 7",
+      "court_room": "Court Room 3",
+      "judge_name": "Honorable Judge Singh",
+      "hearing_time": "10:75 AM"
+    },
+    {
+      "serial_no": 8,
+      "case_number": "CA/8/2024",
+      "petitioner": "Petitioner 8",
+      "respondent": "Respondent 8",
+      "court_room": "Court Room 4",
+      "judge_name": "Honorable Judge Kumar",
+      "hearing_time": "10:30 AM"
+    },
+    {
+      "serial_no": 9,
+      "case_number": "CA/9/2024",
+      "petitioner": "Petitioner 9",
+      "respondent": "Respondent 9",
+      "court_room": "Court Room 5",
+      "judge_name": "Honorable Judge Yadav",
+      "hearing_time": "10:45 AM"
+    },
+    {
+      "serial_no": 10,
+      "case_number": "CA/10/2024",
+      "petitioner": "Petitioner 10",
+      "respondent": "Respondent 10",
+      "court_room": "Court Room 1",
+      "judge_name": "Honorable Judge Sharma",
+      "hearing_time": "10:60 AM"
+    }
+  ]
+}
